@@ -28,23 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.txtPath = new System.Windows.Forms.TextBox();
             this.listBox = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
-            // 
-            // txtPath
-            // 
-            this.txtPath.BackColor = System.Drawing.SystemColors.HotTrack;
-            this.txtPath.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtPath.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.txtPath.Location = new System.Drawing.Point(0, 0);
-            this.txtPath.Name = "txtPath";
-            this.txtPath.Size = new System.Drawing.Size(1242, 27);
-            this.txtPath.TabIndex = 1;
             // 
             // listBox
             // 
             this.listBox.BackColor = System.Drawing.Color.DarkSlateBlue;
+            this.listBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBox.Font = new System.Drawing.Font("微軟正黑體", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.listBox.ForeColor = System.Drawing.SystemColors.ActiveCaption;
@@ -52,26 +42,23 @@
             this.listBox.ItemHeight = 29;
             this.listBox.Location = new System.Drawing.Point(0, 0);
             this.listBox.Name = "listBox";
-            this.listBox.Size = new System.Drawing.Size(1254, 517);
+            this.listBox.Size = new System.Drawing.Size(1211, 587);
             this.listBox.TabIndex = 1;
             // 
-            // Form1
+            // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 19F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
-            this.ClientSize = new System.Drawing.Size(1254, 544);
-            this.Controls.Add(this.txtPath);
+            this.BackColor = System.Drawing.Color.DarkSlateBlue;
+            this.ClientSize = new System.Drawing.Size(1211, 587);
             this.Controls.Add(this.listBox);
-            this.Name = "Form1";
-            this.Text = "Form1";
+            this.Name = "FormMain";
+            this.Text = "F1:選擇單本資輛夾 F2:展開多本 F3:打開資料夾";
             this.ResumeLayout(false);
 
         }
 
         #endregion
-
-        private TextBox txtPath;
         private ListBox listBox;
     }
 }

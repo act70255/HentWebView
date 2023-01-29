@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 
 namespace HentWebView
@@ -9,9 +10,32 @@ namespace HentWebView
         {
             InitializeComponent();
             InitializeList();
-            txtPath.Click += TxtPath_Click;
+            KeyPreview = true;
             listBox.SelectedValueChanged += ListBox_SelectedValueChanged;
         }
+
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            OnHotKey(keyData);
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
+
+        private void OnHotKey(Keys keyData)
+        {
+            switch (keyData)
+            {
+                case Keys.F1:
+                    SelectFolder();
+                    break;
+                case Keys.F2:
+                    SelectFolder(true);
+                    break;
+                case Keys.F3:
+                    ExecuteFile(Path.GetDirectoryName(Application.ExecutablePath));
+                    break;
+            }
+        }
+
         public void ExecuteFile(string path)
         {
             if (string.IsNullOrEmpty(path))
@@ -24,6 +48,7 @@ namespace HentWebView
             process.FileName = path;
             System.Diagnostics.Process.Start(process);
         }
+
         private void ListBox_SelectedValueChanged(object sender, EventArgs e)
         {
             if (sender is System.Windows.Forms.ListBox ctrl && !string.IsNullOrEmpty(ctrl.Text))
@@ -43,7 +68,7 @@ namespace HentWebView
             listBox.Items.AddRange(htmlList.ToArray());
         }
 
-        private void TxtPath_Click(object sender, EventArgs e)
+        private void SelectFolder(bool expandSubFolder = false)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.SelectedPath = Application.ExecutablePath;
@@ -51,14 +76,21 @@ namespace HentWebView
 
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
             {
-                ProcessPath(fbd.SelectedPath);
+                var path = fbd.SelectedPath;
+                if (expandSubFolder)
+                {
+                    var folders = Directory.GetDirectories(path);
+                    foreach (var folder in folders)
+                    {
+                        WriteToHtml(folder);
+                    }
+                }
+                else
+                {
+                    var htmlfile = WriteToHtml(path);
+                    ExecuteFile(htmlfile);
+                }
             }
-        }
-
-        private void ProcessPath(string path)
-        {
-            var htmlfile = WriteToHtml(path);
-            ExecuteFile(htmlfile);
         }
 
         private string WriteToHtml(string path)
@@ -88,7 +120,7 @@ namespace HentWebView
                 string content = string.Join(Environment.NewLine, imginfos);
                 string html = $@"<html>
             <head>
-                <title>Basic Web Page</title>
+                <title>{new DirectoryInfo(path).Name}</title>
             </head>
             <body>
                 {content}
