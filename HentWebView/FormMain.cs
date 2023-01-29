@@ -14,9 +14,14 @@ namespace HentWebView
         }
         public void ExecuteFile(string path)
         {
+            if (string.IsNullOrEmpty(path))
+            {
+                MessageBox.Show("Not Found");
+                return;
+            }
             var process = new System.Diagnostics.ProcessStartInfo();
             process.UseShellExecute = true;
-            process.FileName= path;
+            process.FileName = path;
             System.Diagnostics.Process.Start(process);
         }
         private void ListBox_SelectedValueChanged(object sender, EventArgs e)
@@ -41,7 +46,6 @@ namespace HentWebView
         private void TxtPath_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
-            //fbd.InitialDirectory= Application.ExecutablePath;
             fbd.SelectedPath = Application.ExecutablePath;
             DialogResult result = fbd.ShowDialog();
 
@@ -55,25 +59,34 @@ namespace HentWebView
         {
             var htmlfile = WriteToHtml(path);
             ExecuteFile(htmlfile);
-            //ShowOnBrowser(path);
         }
 
         private string WriteToHtml(string path)
         {
             var html = GetContent(path);
-            var dicname = new DirectoryInfo(path).Name;
-            var htmlPath = $"{Path.GetDirectoryName(Application.ExecutablePath)}\\{dicname}.html";
-            File.WriteAllText(htmlPath, html);
-            InitializeList();
-            return htmlPath;
+            if (!string.IsNullOrEmpty(html))
+            {
+                var dicname = new DirectoryInfo(path).Name;
+                var htmlPath = $"{Path.GetDirectoryName(Application.ExecutablePath)}\\{dicname}.html";
+                File.WriteAllText(htmlPath, html);
+                InitializeList();
+                return htmlPath;
+            }
+            else
+            {
+                return "";
+            }
         }
 
         private string GetContent(string path)
         {
-            var imgs = Directory.GetFiles(path);
-            var imginfos = imgs.OrderBy(o => o).Select((s, i) => $"<div style=\"text-align:center;color:#999;padding-bottom:10px;font-size:13px;\"><img src=\"{s}\" width=\"99%\"><br><span>{i}/{imgs.Length}</span></div>");
-            string content = string.Join(Environment.NewLine, imginfos);
-            string html = $@"<html>
+            string[] extensions = { ".png", ".jpg", ".jpeg" };
+            var imgs = Directory.GetFiles(path).Where(f => extensions.Contains(Path.GetExtension(f)));
+            if (imgs.Count() > 0)
+            {
+                var imginfos = imgs.OrderBy(o => o).Select((s, i) => $"<div style=\"text-align:center;color:#999;padding-bottom:10px;font-size:13px;\"><img src=\"{s}\" width=\"99%\"><br><span>{i}/{imgs.Count()}</span></div>");
+                string content = string.Join(Environment.NewLine, imginfos);
+                string html = $@"<html>
             <head>
                 <title>Basic Web Page</title>
             </head>
@@ -81,7 +94,10 @@ namespace HentWebView
                 {content}
             </body>
             </html>";
-            return html;
+                return html;
+            }
+            else
+                return "";
         }
     }
 }
