@@ -33,11 +33,11 @@
             // 
             // listBox
             // 
-            this.listBox.BackColor = System.Drawing.Color.DarkSlateBlue;
+            this.listBox.BackColor = System.Drawing.Color.FromArgb(50, 50, 50);
             this.listBox.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.listBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.listBox.Font = new System.Drawing.Font("微軟正黑體", 13.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.listBox.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.listBox.ForeColor = System.Drawing.Color.FromArgb(255, 175, 45);
             this.listBox.FormattingEnabled = true;
             this.listBox.ItemHeight = 29;
             this.listBox.Location = new System.Drawing.Point(0, 0);
