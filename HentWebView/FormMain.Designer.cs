@@ -53,7 +53,7 @@
             this.ClientSize = new System.Drawing.Size(1211, 587);
             this.Controls.Add(this.listBox);
             this.Name = "FormMain";
-            this.Text = "F1:選擇單本資輛夾 F2:展開多本 F3:打開資料夾";
+            this.Text = "F1:選擇單本資輛夾 F2:展開多本 F3:整理單本 F4:整理多本 F5:打開資料夾";
             this.ResumeLayout(false);
 
         }
