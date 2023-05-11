@@ -1,5 +1,7 @@
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace HentWebView
@@ -22,15 +24,22 @@ namespace HentWebView
 
         private void OnHotKey(Keys keyData)
         {
+            //F1:選擇單本資輛夾 F2:展開多本 F3:整理單本 F4:整理多本 F3:打開資料夾
             switch (keyData)
             {
                 case Keys.F1:
-                    SelectFolder();
+                    ConvertFolderToWeb(SelectFolder());
                     break;
                 case Keys.F2:
-                    SelectFolder(true);
+                    ConvertFolderToWeb(SelectFolder(), true);
                     break;
                 case Keys.F3:
+                    CleanUpFolder(SelectFolder());
+                    break;
+                case Keys.F4:
+                    CleanUpMultiFolder(SelectFolder());
+                    break;
+                case Keys.F5:
                     ExecuteFile(Path.GetDirectoryName(Application.ExecutablePath));
                     break;
             }
@@ -68,7 +77,7 @@ namespace HentWebView
             listBox.Items.AddRange(htmlList.ToArray());
         }
 
-        private void SelectFolder(bool expandSubFolder = false)
+        private string SelectFolder()
         {
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             fbd.SelectedPath = Application.ExecutablePath;
@@ -76,20 +85,59 @@ namespace HentWebView
 
             if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
             {
-                var path = fbd.SelectedPath;
-                if (expandSubFolder)
+                return fbd.SelectedPath;
+            }
+            else
+            {
+                return "";
+            }
+        }
+
+        private void ConvertFolderToWeb(string path, bool expandSubFolder = false)
+        {
+            if (string.IsNullOrEmpty(path))
+                return;
+
+            if (expandSubFolder)
+            {
+                var folders = Directory.GetDirectories(path);
+                foreach (var folder in folders)
                 {
-                    var folders = Directory.GetDirectories(path);
-                    foreach (var folder in folders)
-                    {
-                        WriteToHtml(folder);
-                    }
+                    WriteToHtml(folder);
                 }
-                else
+            }
+            else
+            {
+                var htmlfile = WriteToHtml(path);
+                ExecuteFile(htmlfile);
+            }
+        }
+
+        private void CleanUpMultiFolder(string path)
+        {
+            if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
+                return;
+            //var rootDicName = path.Split(Path.DirectorySeparatorChar).LastOrDefault();
+            var dics = Directory.GetDirectories(path);
+            foreach (var dic in dics)
+            {
+                var dictionaryName = dic.Split(Path.DirectorySeparatorChar).LastOrDefault();
+                var files = Directory.GetFiles(dic);
+                for (int i = 0; i < files.Length; i++)
                 {
-                    var htmlfile = WriteToHtml(path);
-                    ExecuteFile(htmlfile);
+                    File.Move(files[i], $"{path}{Path.DirectorySeparatorChar}{dictionaryName}{i.ToString().PadLeft(3, '0')}{Path.GetExtension(files[i])}");
                 }
+            }
+        }
+        private void CleanUpFolder(string path)
+        {
+            if (string.IsNullOrEmpty(path) || !Directory.Exists(path))
+                return;
+            var dictionaryName = path.Split(Path.DirectorySeparatorChar).LastOrDefault();
+            var files = Directory.GetFiles(path);
+            for (int i = 0; i < files.Length; i++)
+            {
+                File.Move(files[i], $"{path}{Path.DirectorySeparatorChar}{dictionaryName}{i.ToString().PadLeft(3, '0')}{Path.GetExtension(files[i])}");
             }
         }
 
