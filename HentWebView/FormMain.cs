@@ -24,7 +24,7 @@ namespace HentWebView
 
         private void OnHotKey(Keys keyData)
         {
-            //F1:選擇單本資輛夾 F2:展開多本 F3:整理單本 F4:整理多本 F3:打開資料夾
+            //F1:選擇單本資輛夾 F2:展開多本 F3:整理單本 F4:整理多本 F5:打開資料夾
             switch (keyData)
             {
                 case Keys.F1:
